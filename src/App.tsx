@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Guide } from './components/Guide'
 import { LanguageSwitch } from './components/LanguageSwitch'
 import { ArrowIcon, CardIcon, CompassIcon, ExternalIcon, MailIcon, PassportIcon, ShieldIcon } from './components/Icons'
-import { copy, type Language } from './data/content'
+import { copy, type CourseType, type Language } from './data/content'
 
 const OFFICIAL_INFO = 'https://kurzy.frs.gov.cz/en/introductory-information'
 
@@ -10,6 +10,10 @@ function App() {
   const [language, setLanguage] = useState<Language>(() => (localStorage.getItem('course-guide-language') as Language) || 'tl')
   const [guideOpen, setGuideOpen] = useState(false)
   const [stepIndex, setStepIndex] = useState(() => Number(localStorage.getItem('course-guide-step') || 0))
+  const [courseType, setCourseType] = useState<CourseType | null>(() => {
+    const saved = localStorage.getItem('course-guide-type')
+    return saved === 'public' || saved === 'company' ? saved : null
+  })
   const t = copy[language]
 
   useEffect(() => {
@@ -21,6 +25,11 @@ function App() {
     localStorage.setItem('course-guide-step', String(stepIndex))
   }, [stepIndex])
 
+  useEffect(() => {
+    if (courseType) localStorage.setItem('course-guide-type', courseType)
+    else localStorage.removeItem('course-guide-type')
+  }, [courseType])
+
   const closeGuide = () => {
     setGuideOpen(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -28,6 +37,7 @@ function App() {
 
   const completeGuide = () => {
     setStepIndex(0)
+    setCourseType(null)
     setGuideOpen(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -44,7 +54,7 @@ function App() {
       </header>
 
       {guideOpen ? (
-        <Guide language={language} stepIndex={stepIndex} onStepChange={setStepIndex} onClose={closeGuide} onComplete={completeGuide} />
+        <Guide language={language} stepIndex={stepIndex} onStepChange={setStepIndex} onClose={closeGuide} onComplete={completeGuide} courseType={courseType} onCourseTypeChange={setCourseType} />
       ) : (
         <main id="main-content">
           <section className="hero">

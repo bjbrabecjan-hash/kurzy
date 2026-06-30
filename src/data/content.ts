@@ -1,7 +1,7 @@
 export type Language = 'tl' | 'en'
+export type CourseType = 'public' | 'company'
 
-export type GuideStep = {
-  shortTitle: Record<Language, string>
+type GuideStepContent = {
   title: Record<Language, string>
   intro: Record<Language, string>
   bullets: Record<Language, string[]>
@@ -10,6 +10,12 @@ export type GuideStep = {
     href: string
     label: Record<Language, string>
   }
+}
+
+export type GuideStep = GuideStepContent & {
+  shortTitle: Record<Language, string>
+  kind?: 'course-type'
+  variants?: Partial<Record<CourseType, Partial<GuideStepContent>>>
 }
 
 export const steps: GuideStep[] = [
@@ -39,6 +45,20 @@ export const steps: GuideStep[] = [
     link: {
       href: 'https://aik.icpraha.com/form/',
       label: { tl: 'Buksan ang orientation quiz', en: 'Open the orientation quiz' },
+    },
+  },
+  {
+    kind: 'course-type',
+    shortTitle: { tl: 'Uri', en: 'Type' },
+    title: { tl: 'Piliin kung sino ang nag-oorganisa ng kurso', en: 'Choose who is organizing the course' },
+    intro: {
+      tl: 'Magkaiba ang bayad at pagpili ng petsa para sa public course at kursong inayos ng kumpanya.',
+      en: 'Payment and course booking are different for a public course and a course arranged by a company.',
+    },
+    bullets: { tl: [], en: [] },
+    note: {
+      tl: 'Kung inimbitahan ka ng HR o employer sa isang group course, piliin ang kursong inayos ng kumpanya.',
+      en: 'If HR or your employer invited you to a group course, choose the company-organized course.',
     },
   },
   {
@@ -78,6 +98,28 @@ export const steps: GuideStep[] = [
       href: 'https://kurzy.frs.gov.cz/en/user/register',
       label: { tl: 'Buksan ang official registration', en: 'Open official registration' },
     },
+    variants: {
+      company: {
+        intro: {
+          tl: 'Kailangan mo pa ring gumawa ng sariling account sa kurzy.frs.gov.cz bago ka maisama ng kumpanya sa kurso.',
+          en: 'You still need your own account at kurzy.frs.gov.cz before the company can include you in its course.',
+        },
+        bullets: {
+          tl: [
+            'Kopyahin ang first at last name nang eksakto gaya sa ePKP.',
+            'Ilagay ang passport/EU ID number at ePKP number.',
+            'Piliin ang nationality, preferred language at district.',
+            'Pagkatapos mag-register, sabihin sa HR o company contact na handa na ang account mo.',
+          ],
+          en: [
+            'Copy your first and last name exactly as shown on the ePKP.',
+            'Enter the passport/EU ID number and ePKP number.',
+            'Choose nationality, preferred language and district.',
+            'After registration, tell HR or the company contact that your account is ready.',
+          ],
+        },
+      },
+    },
   },
   {
     shortTitle: { tl: 'Magbayad', en: 'Pay' },
@@ -104,6 +146,33 @@ export const steps: GuideStep[] = [
       tl: 'Huwag magbayad sa account na ipinadala sa chat o social media. Suriin lagi ang details sa official portal.',
       en: 'Do not pay an account sent through chat or social media. Always verify the details in the official portal.',
     },
+    variants: {
+      company: {
+        title: { tl: 'Sundin ang payment instructions ng kumpanya', en: 'Follow the company payment instructions' },
+        intro: {
+          tl: 'Para sa kursong hindi para sa publiko, ang organizing company ang nakikipag-ayos at nagbabayad nang sama-sama sa Integration Centre.',
+          en: 'For a course not intended for the public, the organizing company coordinates and pays collectively through the Integration Centre.',
+        },
+        bullets: {
+          tl: [
+            'Ang amount sa state ay CZK 800 bawat participant para sa company-organized course.',
+            'Huwag magbayad ng CZK 1,500 nang direkta sa Ministry.',
+            'Kung may babayaran ka, sundin lamang ang malinaw na instructions ng organizing company.',
+            'Kumpirmahin sa HR o company contact na kasama ka sa group payment at participant list.',
+          ],
+          en: [
+            'The amount payable to the state is CZK 800 per participant for a company-organized course.',
+            'Do not pay CZK 1,500 directly to the Ministry.',
+            'If you are asked to pay, follow only the clear instructions of the organizing company.',
+            'Confirm with HR or the company contact that you are included in the group payment and participant list.',
+          ],
+        },
+        note: {
+          tl: 'Hindi kinikilala ang kursong hindi inorganisa o pinangasiwaan ng isang opisyal na Integration Centre.',
+          en: 'A course that is not organized or administered by an official Integration Centre will not satisfy the obligation.',
+        },
+      },
+    },
   },
   {
     shortTitle: { tl: 'Pumili', en: 'Choose' },
@@ -129,6 +198,30 @@ export const steps: GuideStep[] = [
     link: {
       href: 'https://kurzy.frs.gov.cz/en/user',
       label: { tl: 'Mag-log in sa official portal', en: 'Log in to the official portal' },
+    },
+    variants: {
+      company: {
+        title: { tl: 'Hintayin ang petsa at lugar mula sa kumpanya', en: 'Wait for the date and location from the company' },
+        intro: {
+          tl: 'Ang kumpanya at Integration Centre ang nag-aayos ng group course at direktang makikipag-ugnayan sa iyo.',
+          en: 'The company and Integration Centre arrange the group course and contact you directly.',
+        },
+        bullets: {
+          tl: [
+            'Hindi mo kailangang pumili ng public course date sa portal.',
+            'Kumpirmahin ang petsa, oras, lugar at contact person sa HR o organizing company.',
+            'Tanungin kung anong interpreter language ang naka-book para sa grupo.',
+            'Walang Filipino/Tagalog sa kasalukuyang official list; kumpirmahin kung English ang gagamitin.',
+          ],
+          en: [
+            'You do not need to choose a public course date in the portal.',
+            'Confirm the date, time, location and contact person with HR or the organizing company.',
+            'Ask which interpreter language has been booked for the group.',
+            'Filipino/Tagalog is not on the current official list; confirm whether English will be used.',
+          ],
+        },
+        link: undefined,
+      },
     },
   },
   {
@@ -157,6 +250,30 @@ export const steps: GuideStep[] = [
   },
 ]
 
+export function getSteps(courseType: CourseType | null): Omit<GuideStep, 'variants'>[] {
+  return steps.map(({ variants, ...step }) => ({
+    ...step,
+    ...(courseType ? variants?.[courseType] : undefined),
+  }))
+}
+
+export const courseOptions: Record<CourseType, {
+  title: Record<Language, string>
+  description: Record<Language, string>
+  detail: Record<Language, string>
+}> = {
+  public: {
+    title: { tl: 'Public course', en: 'Public course' },
+    description: { tl: 'Ako mismo ang nagre-register at pumipili ng petsa.', en: 'I register, pay and choose the date myself.' },
+    detail: { tl: 'Bayad sa state: CZK 1,500', en: 'State fee: CZK 1,500' },
+  },
+  company: {
+    title: { tl: 'Kurso na inayos ng kumpanya', en: 'Course organized by my company' },
+    description: { tl: 'Inimbitahan ako ng employer o HR sa isang group course.', en: 'My employer or HR invited me to a group course.' },
+    detail: { tl: 'Company ang nag-aayos ng group payment', en: 'The company arranges the group payment' },
+  },
+}
+
 export const copy = {
   tl: {
     start: 'Simulan ang gabay',
@@ -167,7 +284,7 @@ export const copy = {
     official: 'Buksan ang official website',
     headline: 'Kumpletuhin ang iyong kurso, hakbang-hakbang',
     subhead: 'Gabay lamang ito. Walang personal na data ang kinokolekta.',
-    steps: '7 hakbang',
+    steps: '8 hakbang',
     prepare: 'Bago ka magsimula, ihanda ang:',
     privacyTitle: 'Ligtas at pribado',
     privacy: 'Ang iyong progress lamang ang sine-save sa browser na ito. Walang passport, ePKP o contact details ang hinihingi.',
@@ -183,7 +300,7 @@ export const copy = {
     official: 'Open official website',
     headline: 'Complete your course, step by step',
     subhead: 'This guide only explains the process. It does not collect personal data.',
-    steps: '7 steps',
+    steps: '8 steps',
     prepare: 'Before you begin, prepare:',
     privacyTitle: 'Safe and private',
     privacy: 'Only your progress is saved in this browser. The guide never asks for passport, ePKP or contact details.',
