@@ -63,7 +63,7 @@ function App() {
               <div className="step-count"><span>✓</span><strong>{t.steps}</strong></div>
             </div>
             <div className="hero-art">
-              <img src="/assets/course-guide-hero.png" alt={language === 'tl' ? 'Lalaking may hawak na ePKP card at passport' : 'A man holding an ePKP card and passport'} />
+              <img src={`${import.meta.env.BASE_URL}assets/course-guide-hero.png`} alt={language === 'tl' ? 'Lalaking may hawak na ePKP card at passport' : 'A man holding an ePKP card and passport'} />
             </div>
           </section>
 
