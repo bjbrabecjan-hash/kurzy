@@ -51,3 +51,11 @@ export function PassportIcon({ size = 26, className }: IconProps) {
 export function MailIcon({ size = 26, className }: IconProps) {
   return <svg {...base(size, className)}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></svg>
 }
+
+export function CalendarIcon({ size = 26, className }: IconProps) {
+  return <svg {...base(size, className)}><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 10h18M8 14h2M14 14h2M8 18h2" /></svg>
+}
+
+export function BuildingIcon({ size = 26, className }: IconProps) {
+  return <svg {...base(size, className)}><path d="M4 21V7l8-4 8 4v14M2 21h20M8 9h2M14 9h2M8 13h2M14 13h2M10 21v-4h4v4" /></svg>
+}
