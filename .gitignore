@@ -4,3 +4,4 @@ dist
 .venv
 work
 *.local
+.vercel

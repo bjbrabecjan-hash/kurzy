@@ -18,6 +18,8 @@ npm run lint
 npm run build
 ```
 
+`npm run build:pages` refreshes the committed `docs/` fallback used when GitHub Pages is configured to deploy directly from the `main` branch.
+
 ## Content basis
 
 The prototype content is based on the official introductory information and registration pages reviewed on 30 June 2026. Legal and operational details should be reviewed periodically before production use.
