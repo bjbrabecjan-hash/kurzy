@@ -5,29 +5,59 @@ import { ArrowIcon, CardIcon, CompassIcon, ExternalIcon, MailIcon, PassportIcon,
 import { copy, type CourseType, type Language } from './data/content'
 
 const OFFICIAL_INFO = 'https://kurzy.frs.gov.cz/en/introductory-information'
+const storage = {
+  get(key: string) {
+    try {
+      return window.localStorage.getItem(key)
+    } catch {
+      return null
+    }
+  },
+  set(key: string, value: string) {
+    try {
+      window.localStorage.setItem(key, value)
+    } catch {
+      // Safari can block localStorage in private or restricted modes.
+      // The guide must still work; saved progress is optional.
+    }
+  },
+  remove(key: string) {
+    try {
+      window.localStorage.removeItem(key)
+    } catch {
+      // Ignore blocked storage.
+    }
+  },
+}
 
 function App() {
-  const [language, setLanguage] = useState<Language>(() => (localStorage.getItem('course-guide-language') as Language) || 'tl')
+  const [language, setLanguage] = useState<Language>(() => {
+    const saved = storage.get('course-guide-language')
+    return saved === 'tl' || saved === 'en' ? saved : 'tl'
+  })
   const [guideOpen, setGuideOpen] = useState(false)
-  const [stepIndex, setStepIndex] = useState(() => Number(localStorage.getItem('course-guide-step') || 0))
+  const [stepIndex, setStepIndex] = useState(() => {
+    const saved = Number(storage.get('course-guide-step') || 0)
+    return Number.isFinite(saved) && saved >= 0 ? saved : 0
+  })
   const [courseType, setCourseType] = useState<CourseType | null>(() => {
-    const saved = localStorage.getItem('course-guide-type')
+    const saved = storage.get('course-guide-type')
     return saved === 'public' || saved === 'company' ? saved : null
   })
   const t = copy[language]
 
   useEffect(() => {
     document.documentElement.lang = language
-    localStorage.setItem('course-guide-language', language)
+    storage.set('course-guide-language', language)
   }, [language])
 
   useEffect(() => {
-    localStorage.setItem('course-guide-step', String(stepIndex))
+    storage.set('course-guide-step', String(stepIndex))
   }, [stepIndex])
 
   useEffect(() => {
-    if (courseType) localStorage.setItem('course-guide-type', courseType)
-    else localStorage.removeItem('course-guide-type')
+    if (courseType) storage.set('course-guide-type', courseType)
+    else storage.remove('course-guide-type')
   }, [courseType])
 
   const closeGuide = () => {
